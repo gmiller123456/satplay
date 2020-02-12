@@ -1,0 +1,82 @@
+<html>
+<body>
+<script>
+var canvas=document.createElement("canvas");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+document.body.appendChild(canvas);
+
+var gl=canvas.getContext('webgl');
+gl.clearColor(1,0,1,1);
+gl.clear(gl.COLOR_BUFFER_BIT);
+
+var vertexShader=gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vertexShader, [
+ 'attribute vec2 position;',
+ 'attribute vec3 vertColor;',
+'varying vec3 fragColor;',
+ 'void main() {',
+	'fragColor=vertColor;',
+	'gl_Position=vec4(position,0,1.0);',
+ '}'
+].join('\n'));
+
+gl.compileShader(vertexShader);
+if(!gl.getShaderParameter(vertexShader,gl.COMPILE_STATUS)){
+	console.error('vert ERROR:',gl.getShaderInfoLog(vertexShader));
+}
+
+var fragmentShader=gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fragmentShader,[
+	'precision highp float;',
+	'varying vec3 fragColor;',
+	'uniform vec4 color;',
+	'void main() {',
+		'gl_FragColor=vec4(fragColor,1.0);',
+	'}'
+].join('\n'));
+gl.compileShader(fragmentShader);
+if(!gl.getShaderParameter(fragmentShader,gl.COMPILE_STATUS)){
+	console.error('frag ERROR:',gl.getShaderInfoLog(fragmentShader));
+}
+
+var program=gl.createProgram();
+gl.attachShader(program,vertexShader);
+gl.attachShader(program,fragmentShader);
+gl.linkProgram(program);
+if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
+	console.error('link ERROR:',gl.getProgramInfoLog(program));
+}
+
+//Only do during development
+gl.validateProgram(program);
+if(!gl.getProgramParameter(program,gl.VALIDATE_STATUS)){
+	console.error('validate ERROR:',gl.getProgramInfoLog(program));
+}
+
+var vertices=new Float32Array([
+	-0.5,-0.5,    1,1,0,
+	.5,-.5,       .7,0,1,
+	0,.5,          .1,1,.6
+]);
+
+var buffer=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
+gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);
+
+gl.useProgram(program);
+program.color=gl.getUniformLocation(program,'color');
+gl.uniform4fv(program.color,[0,1,0,1.0]);
+
+program.position=gl.getAttribLocation(program,'position');
+program.vertColor=gl.getAttribLocation(program,'vertColor');
+gl.enableVertexAttribArray(program.position);
+gl.enableVertexAttribArray(program.vertColor);
+gl.vertexAttribPointer(program.position,2,gl.FLOAT,false,5*Float32Array.BYTES_PER_ELEMENT,0);
+gl.vertexAttribPointer(program.vertColor,3,gl.FLOAT,false,5*Float32Array.BYTES_PER_ELEMENT,2*4);
+
+gl.drawArrays(gl.TRIANGLES,0,3);
+//gl.drawArrays(gl.TRIANGLES,0,vertices.length/2);
+</script>
+</body>
+</html>

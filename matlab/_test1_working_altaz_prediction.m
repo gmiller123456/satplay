@@ -6,28 +6,28 @@ dat  = 37;
 eqeterms = 2;
 timezone=0;
 %Louisville
-obsLat=38.2540/rad;
-obsLon=-85.7590/rad;
-xp   =  0.0;
-yp   =  0.0;
+obsLat=38.2464000/rad;
+obsLon=-85.7636/rad;
+xp   =  1.0/rad;
+yp   =  1.0/rad;
 lod  =  0.0;
 dut1 =  0.0;
 ddpsi =0;
 ddeps =0;
 
-longstr1 = '1 25544U 98067A   19107.92643309  .00001649  00000-0  33850-4 0  9997';
-longstr2 = '2 25544  51.6431 300.7557 0001426 186.1547 315.1299 15.52563769165892';
+longstr1="1 25544U 98067A   20041.70177340  .00000229  00000-0  12293-4 0  9990";
+longstr2="2 25544  51.6437 259.2514 0004765 250.6840 217.7791 15.49151695212255";
 
 %18 Apr 2019 10:51:55	43°	NW
-t.year=2019;
-t.mon=3;
-t.mday=18;
-t.hour=10+4;
-t.min=51;
-t.sec=55;
-t.yday=107;
+t.year=2020;
+t.mon=1;
+t.mday=10;
+t.hour=12; %UT
+t.min=0;
+t.sec=0;
+t.yday=40; %Day of year - 1
 
-[startmfe, stopmfe, deltamin, satrec] = twoline2rv(longstr1, longstr2, 'c','e', 'a', 72);
+[startmfe, stopmfe, deltamin, satrec] = twoline2rv(longstr1, longstr2, 'c','e', 'a', 84);
 
 dayfract=t.hour/24.0+t.min/60.0/24.0+t.sec/60.0/60.0/24.0;
 diff=(t.yday+1+dayfract)-satrec.epochdays;
